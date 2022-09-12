@@ -1,0 +1,130 @@
+// SUDOKU é um jogo de raciocínio e lógica. 
+//O objetivo do jogo é completar todos os quadrados utilizando números de 1 a 9. 
+//Para completá-los basta seguir a seguinte regra: Não podem haver 
+//números repetidos nas linhas horizontais e verticais, assim como nos quadrados delimitados por linhas em negrito.
+
+// Para esse trabalho especifico, o codigo dele em si irei usar para formar o tabuleiro vai ser uma 
+// Matriz INT bidimensional, então é int e um double array e vamos chama-la de BOARD que é a tabela 3x3
+// o Sudoku em si será formado automaticamente, nao sei se é assim exatamente para fazer ou se tem que ser feito por um 
+// usuario mesmo porem e o jogo Sudoku e como funciona o codigo. Acredito que esteja certo, fiz as palavras em ingles
+// porque e mais confortavel para mim ler ja que java é tudo ingles diferente e visualg.
+import java.util.Scanner;
+/**
+ * @Lucas Gabriel Ferraz Li
+ */
+
+package Sudoku;
+
+
+public class Sudoku {
+  
+  private static final int GRID_SIZE = 9;
+  
+  public static void main(String[] args) {
+    
+    int[][] board = {
+        {7, 0, 2, 0, 5, 0, 6, 0, 0},    // layout do sudoku 
+        {0, 0, 0, 0, 0, 3, 0, 0, 0},
+        {1, 0, 0, 0, 0, 9, 5, 0, 0},
+        {8, 0, 0, 0, 0, 0, 0, 9, 0},
+        {0, 4, 3, 0, 0, 0, 7, 5, 0},
+        {0, 9, 0, 0, 0, 0, 0, 0, 8},
+        {0, 0, 9, 7, 0, 0, 0, 0, 5},
+        {0, 0, 0, 2, 0, 0, 0, 0, 0},
+        {0, 0, 7, 0, 4, 0, 2, 0, 3} 
+      };
+    
+    printBoard(board);
+    
+    if (solveBoard(board)) {
+      System.out.println("Resolvido com Sucesso!");
+    }
+    else {
+      System.out.println("Resposta incorreta.");
+    }
+    
+    printBoard(board);
+    
+  }
+  
+  
+  private static void printBoard(int[][] board) {
+    for (int row = 0; row < GRID_SIZE; row++) {
+      if (row % 3 == 0 && row != 0) {
+        System.out.println("-----------");  // isso é para que quando rodar o codigo, que fique bem separados as
+      }                                     // linhas, de forma mais visivel e mais bonito.
+      for (int column = 0; column < GRID_SIZE; column++) {
+        if (column % 3 == 0 && column != 0) {   // e esse é para que as colunas fiquem dividas para que cada 
+          System.out.print("|");                // bloco de 0 a 9 fique bem posicionado.
+        }
+        System.out.print(board[row][column]);
+      }
+      System.out.println();
+    }
+  }                                                                         // com esse metodo irei formar as linhas
+                                                                            // do quadrado 3x3 e seguinte as colunas
+
+  private static boolean isNumberInRow(int[][] board, int number, int row) { // irei usar PRIVATE STATIC BOLEAND 
+    for (int i = 0; i < GRID_SIZE; i++) {                                    // para retornar TRUE se esse numero   
+      if (board[row][i] == number) {                                         // se ele ja existir na linha e FALSE   
+        return true;                                                         // caso nao exsitir.    
+      }                                                                       
+    }                                                                                                                                                                                                                                                                                                             
+    return false;
+  }
+  
+  private static boolean isNumberInColumn(int[][] board, int number, int column) {  // método para criacação de colunas
+    for (int i = 0; i < GRID_SIZE; i++) {
+      if (board[i][column] == number) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  private static boolean isNumberInBox(int[][] board, int number, int row, int column) { // Método para formar quadros 3x3 da board
+    int localBoxRow = row - row % 3;                                                     // 
+    int localBoxColumn = column - column % 3;
+    
+    for (int i = localBoxRow; i < localBoxRow + 3; i++) {
+      for (int j = localBoxColumn; j < localBoxColumn + 3; j++) {
+        if (board[i][j] == number) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  
+  private static boolean isValidPlacement(int[][] board, int number, int row, int column) { // metodo para verificar métodos anteriores 
+    return !isNumberInRow(board, number, row) &&                                            //
+        !isNumberInColumn(board, number, column) &&
+        !isNumberInBox(board, number, row, column);
+  }
+  
+  private static boolean solveBoard(int[][] board) { // esse ultimo método e onde o Sudoku será finalizado e será feito pelo computador
+    for (int row = 0; row < GRID_SIZE; row++) {      // diferente de um ser humano, tudo será feito em um segundo. 
+      for (int column = 0; column < GRID_SIZE; column++) {
+        if (board[row][column] == 0) {
+          for (int numberToTry = 1; numberToTry <= GRID_SIZE; numberToTry++) {
+            if (isValidPlacement(board, numberToTry, row, column)) {
+              board[row][column] = numberToTry;
+              
+              if (solveBoard(board)) {
+                return true;
+              }
+              else {
+                board[row][column] = 0;
+              }
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  
+  
+  
+}
